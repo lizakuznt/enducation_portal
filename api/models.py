@@ -8,7 +8,11 @@ class Role(models.Model):
 
 # Пользователь (User)
 class User(AbstractBaseUser):
+    username = models.CharField(max_length=255, unique=True)
+    password = models.CharField(max_length=255)
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
 
 # Программа (Program)
 class Program(models.Model):
