@@ -1,17 +1,41 @@
 from django.db import models
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 # Роль (Role)
 class Role(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
 
+class UserManager(BaseUserManager):
+    def get_by_natural_key(self, username):
+        return self.get(**{self.model.USERNAME_FIELD: username})
+
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("Email is required")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(email, password, **extra_fields)
+
 # Пользователь (User)
-class User(models.Model):
+class User(AbstractBaseUser):
     username = models.CharField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
+
+    USERNAME_FIELD = "username"  # Вот этот атрибут обязательно должен быть
+    REQUIRED_FIELDS = []  # Если используешь email как основной логин
+
+    objects = UserManager()  # Менеджер здесь
 
 # Программа (Program)
 class Program(models.Model):
