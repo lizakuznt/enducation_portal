@@ -16,11 +16,11 @@ class RoleViewSet(viewsets.ModelViewSet):
     serializer_class = RoleSerializer
 
 # Пользователь (CRUD)
-class UserViewSet(viewsets.ModelViewSet):    
+class CustomUserViewSet(viewsets.ModelViewSet):    
     permission_classes = [IsAuthenticated]
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CustomUserSerializer
 
 # Программа (CRUD)
 class ProgramViewSet(viewsets.ModelViewSet):
@@ -117,7 +117,7 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
 
-            # Генерируем JWT-токен
+            # Генерируем JWT-токены
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 

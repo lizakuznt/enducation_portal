@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
 
 # Роль (Role)
 class Role(models.Model):
@@ -6,12 +7,8 @@ class Role(models.Model):
     description = models.TextField(blank=True, null=True)
 
 # Пользователь (User)
-class User(models.Model):
-    username = models.CharField(max_length=255, unique=True)
-    password = models.CharField(max_length=255)
+class User(AbstractBaseUser):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
-    email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=True)
 
 # Программа (Program)
 class Program(models.Model):
