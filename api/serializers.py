@@ -60,3 +60,25 @@ class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = '__all__'
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'password', 'password2']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError({"password": "Пароли не совпадают"})
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('password2')  # Убираем второе поле пароля
+        user = User(
+            username=validated_data['username'],
+            email=validated_data['email']
+        )
+        user.save()
+        return user
