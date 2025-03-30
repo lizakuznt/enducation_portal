@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,7 +67,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'password2']
+        fields = ['id', 'username', 'email', 'password', 'password2', 'role']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, data):
@@ -76,10 +77,20 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password2')  # Убираем второе поле пароля
+        role = validated_data.pop('role')
         user = User(
             username=validated_data['username'],
-            email=validated_data['email']
+            email=validated_data['email'], 
         )
+        user.role = role
         user.set_password(validated_data['password'])  # Хешируем пароль
         user.save()
         return user
+    
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username  # Дополнительно добавляем инфу в токен        
+        token['role'] = user.role.id if user.role else None
+        return token

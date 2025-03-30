@@ -7,6 +7,7 @@ from .serializers import *
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # Роль (CRUD)
 class RoleViewSet(viewsets.ModelViewSet):
@@ -115,16 +116,20 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
+            # Сохраняем пользователя
             user = serializer.save()
 
-            # Генерируем JWT-токены
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-
+            # Генерация токенов через кастомный сериализатор для включения роли
+            token_serializer = CustomTokenObtainPairSerializer()
+            refresh = token_serializer.get_token(user)
+            
             return Response({
                 "message": "Пользователь успешно зарегистрирован",
-                "access": access_token,
-                "refresh": str(refresh)
+                "access": str(refresh.access_token),  # Доступный токен с ролью
+                "refresh": str(refresh),  # Токен обновления
             }, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+    
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
