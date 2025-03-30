@@ -18,18 +18,6 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Create a non-privileged user that the app will run under.
-# See https://docs.docker.com/go/dockerfile-user-best-practices/
-ARG UID=10001
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
-
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
@@ -39,10 +27,16 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     python -m pip install -r requirements.txt
 
 # Switch to the non-privileged user to run the application.
-USER appuser
+USER root
 
 # Copy the source code into the container.
 COPY . .
+
+# Убедись, что нужная директория существует
+RUN mkdir -p /app/db
+
+# Устанавливаем права на директорию базы данных, чтобы контейнер мог записывать в нее
+RUN chmod -R 777 /app/db
 
 # Expose the port that the application listens on.
 EXPOSE 8000
