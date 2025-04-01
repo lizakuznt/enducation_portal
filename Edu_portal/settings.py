@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-jx%s5t%(ya)=(i+r28r6ke#z=@2r(0=it#gpc8mvjwy72nd=df
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['45.134.12.180']
+ALLOWED_HOSTS = ['45.134.12.180', 'educationportal.fun']
 
 
 # Application definition
