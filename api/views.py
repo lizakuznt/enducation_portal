@@ -12,11 +12,13 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from io import BytesIO
 from datetime import datetime
+from pathlib import Path
 
 from .models import *
 from .serializers import *
 
-pdfmetrics.registerFont(TTFont('Arial', 'fonts/Arial.ttf'))
+BASE_DIR = Path(__file__).resolve().parent.parent
+pdfmetrics.registerFont(TTFont('Arial', f'{BASE_DIR}/fonts/Arial.ttf'))
 
 # Роль (CRUD)
 class RoleViewSet(viewsets.ModelViewSet):
