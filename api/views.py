@@ -17,8 +17,7 @@ from pathlib import Path
 from .models import *
 from .serializers import *
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-pdfmetrics.registerFont(TTFont('Arial', f'/root/{BASE_DIR}/fonts/arial.ttf'))
+pdfmetrics.registerFont(TTFont('Arial', f'/root/app/fonts/arial.ttf'))
 
 # Роль (CRUD)
 class RoleViewSet(viewsets.ModelViewSet):
