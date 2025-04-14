@@ -7,10 +7,16 @@
 # You can add other services your application may depend on here, such as a
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
+
+volumes:
+  education_portal_database:
+
 services:
   server:
     build:
       context: .
+    volumes:
+      [education_portal_database:/app/db]
     ports:
       - 8000:8000
 # The commented out section below is an example of how to define a PostgreSQL
