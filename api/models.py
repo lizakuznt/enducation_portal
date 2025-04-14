@@ -80,15 +80,18 @@ class Task(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     deadline = models.DateField()
+    material = models.ForeignKey(EducationalMaterial, on_delete=models.CASCADE, null=True)
+    extra_materials = models.CharField(max_length=1000, null=True)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, null=True)
 
 # Выполненное Задание (CompletedTask)
 class CompletedTask(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    file_path = models.TextField()
-    score = models.DecimalField(max_digits=5, decimal_places=2)
+    score = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     submission_date = models.DateField(auto_now_add=True)
     status = models.CharField(max_length=50)
+    answer = models.CharField(max_length=1000)
 
 # Участник (Participant)
 class Participant(models.Model):
