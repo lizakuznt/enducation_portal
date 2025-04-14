@@ -17,7 +17,7 @@ from pathlib import Path
 from .models import *
 from .serializers import *
 
-pdfmetrics.registerFont(TTFont('Arial', f'/root/app/fonts/arial.ttf'))
+pdfmetrics.registerFont(TTFont('Arial', f'/app/fonts/arial.ttf'))
 
 # Роль (CRUD)
 class RoleViewSet(viewsets.ModelViewSet):
