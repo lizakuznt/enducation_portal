@@ -11,6 +11,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from io import BytesIO
+from datetime import datetime
 
 from .models import *
 from .serializers import *
@@ -89,7 +90,6 @@ class EducationalMaterialViewSet(viewsets.ModelViewSet):
                 "id": material.id,
                 "name": material.name,
                 "description": material.description,
-                "deadline": material.deadline,
                 "program": material.program.id if material.program else None,
                 "task": task_data
             })
@@ -106,18 +106,17 @@ class TaskViewSet(viewsets.ModelViewSet):
     def response(self, request, pk=None):
         task = self.get_object()
         user = request.user
-
         answer_text = request.data.get("answer")
-        file = request.FILES.get("file")
 
-        if not answer_text and not file:
-            return Response({"detail": "Необходимо передать ответ или файл."}, status=status.HTTP_400_BAD_REQUEST)
+        if not answer_text:
+            return Response({"detail": "Необходимо передать ответ."}, status=status.HTTP_400_BAD_REQUEST)
 
         CompletedTask.objects.create(
             task=task,
             user=user,
             answer=answer_text,
-            file=file,
+            submission_date = datetime.now(),
+            status = 'Ответ получен'
         )
 
         return Response({"message": "Ответ отправлен успешно."}, status=status.HTTP_201_CREATED)
