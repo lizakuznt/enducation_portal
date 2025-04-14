@@ -31,6 +31,7 @@ class User(AbstractBaseUser):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
+    
 
     USERNAME_FIELD = "username"  # Вот этот атрибут обязательно должен быть
     REQUIRED_FIELDS = []  # Если используешь email как основной логин
@@ -105,6 +106,7 @@ class Certificate(models.Model):
     certificate_number = models.CharField(max_length=255, unique=True)
     issued_date = models.DateField(auto_now_add=True)
     file_path = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 # Заявка на обучение (Application)
 class Application(models.Model):
