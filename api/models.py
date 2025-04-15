@@ -99,6 +99,7 @@ class Participant(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     middle_name = models.CharField(max_length=255, blank=True, null=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
     education = models.TextField()
     work_experience = models.TextField()
 
